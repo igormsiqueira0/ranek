@@ -1,5 +1,5 @@
 <template>
-	<footer><p>Ranek. alguns direitos reservados</p></footer>
+	<footer><p>Ranek. Alguns direitos reservados</p></footer>
 </template>
 
 <script>

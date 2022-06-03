@@ -1,26 +1,33 @@
 <template>
 	<section class="produtos-container">
-		<ul class="produtos" v-if="data && data.length">
-			<li class="produto" v-for="(produto, index) in data" :key="index">
-				<router-link to="/">
-					<img
-						v-if="produto.fotos"
-						:src="produto.fotos[0].src"
-						:alt="produto.fotos[0].titulo"
-					/>
-					<p class="preco">{{ produto.preco }}</p>
-					<h2 class="titulo">{{ produto.nome }}</h2>
-					<p class="descricao">{{ produto.descricao }}</p>
-				</router-link>
-			</li>
-			<ProdutosPaginacao :itemsPorPag="itemsPorPag" :itemsTotal="itemsTotal" />
-		</ul>
+		<transition mode="out-in">
+			<ul class="produtos" v-if="data && data.length" key="produtos">
+				<li class="produto" v-for="(produto, index) in data" :key="index">
+					<router-link to="/">
+						<img
+							v-if="produto.fotos"
+							:src="produto.fotos[0].src"
+							:alt="produto.fotos[0].titulo"
+						/>
+						<p class="preco">{{ produto.preco }}</p>
+						<h2 class="titulo">{{ produto.nome }}</h2>
+						<p class="descricao">{{ produto.descricao }}</p>
+					</router-link>
+				</li>
+				<ProdutosPaginacao
+					:itemsPorPag="itemsPorPag"
+					:itemsTotal="itemsTotal"
+				/>
+			</ul>
 
-		<div v-else-if="data && data.length === 0">
-			<p class="sem-resultados">
-				Busca sem resultados. Tente buscar outro termo.
-			</p>
-		</div>
+			<div v-else-if="data && data.length === 0" key="sem-resultados">
+				<p class="sem-resultados">
+					Busca sem resultados. Tente buscar outro termo.
+				</p>
+			</div>
+
+			<PaginaCarregando v-else key="carregando" />
+		</transition>
 	</section>
 </template>
 
@@ -34,7 +41,7 @@ export default {
 	data() {
 		return {
 			data: null,
-			itemsPorPag: 5,
+			itemsPorPag: 9,
 			itemsTotal: 0,
 		};
 	},
@@ -50,10 +57,13 @@ export default {
 	},
 	methods: {
 		async getData() {
-			api.get(this.url).then((r) => {
-				this.data = r.data;
-				this.itemsTotal = +r.headers['x-total-count'];
-			});
+			this.data = null;
+			setTimeout(() => {
+				api.get(this.url).then((r) => {
+					this.data = r.data;
+					this.itemsTotal = +r.headers['x-total-count'];
+				});
+			}, 1500);
 		},
 	},
 	watch: {

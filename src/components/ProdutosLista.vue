@@ -58,12 +58,10 @@ export default {
 	methods: {
 		async getData() {
 			this.data = null;
-			setTimeout(() => {
-				api.get(this.url).then((r) => {
-					this.data = r.data;
-					this.itemsTotal = +r.headers['x-total-count'];
-				});
-			}, 1500);
+			api.get(this.url).then((r) => {
+				this.data = r.data;
+				this.itemsTotal = +r.headers['x-total-count'];
+			});
 		},
 	},
 	watch: {

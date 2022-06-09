@@ -3,9 +3,21 @@
 		<h1>Login</h1>
 		<form>
 			<label for="email">Email</label>
-			<input type="email" name="email" id="email" v-model="login.email" />
+			<input
+				type="email"
+				name="email"
+				id="email"
+				v-model="login.email"
+				required
+			/>
 			<label for="senha">Senha</label>
-			<input type="password" name="senha" id="senha" v-model="login.password" />
+			<input
+				type="password"
+				name="senha"
+				id="senha"
+				v-model="login.password"
+				required
+			/>
 
 			<button type="submit" class="btn" @click.prevent="logar">Logar</button>
 		</form>

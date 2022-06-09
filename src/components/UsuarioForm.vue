@@ -1,13 +1,22 @@
 <template>
 	<form>
-		<label for="nome">Nome</label>
-		<input type="text" id="nome" name="nome" v-model="nome" />
-		<label for="email">Email</label>
-		<input type="email" id="email" name="email" v-model="email" />
-		<label for="senha">Senha</label>
-		<input type="password" id="senha" name="senha" v-model="senha" />
+		<div class="usuario" v-if="mostrarDadosLogin">
+			<label for="nome">Nome</label>
+			<input type="text" id="nome" name="nome" v-model="nome" />
+			<label for="email">Email</label>
+			<input type="email" id="email" name="email" v-model="email" />
+			<label for="senha">Senha</label>
+			<input type="password" id="senha" name="senha" v-model="senha" />
+		</div>
+
 		<label for="cep">CEP</label>
-		<input type="text" id="cep" name="cep" v-model="cep" />
+		<input
+			type="text"
+			id="cep"
+			name="cep"
+			v-model="cep"
+			@keyup="preencherCEP"
+		/>
 		<label for="rua">Rua</label>
 		<input type="text" id="rua" name="rua" v-model="rua" />
 		<label for="numero">Número</label>
@@ -25,16 +34,59 @@
 </template>
 
 <script>
+import { mapFields } from '@/helpers';
+import { getCEP } from '@/services';
+
 export default {
 	name: 'UsuarioForm',
+	computed: {
+		...mapFields({
+			fields: [
+				'nome',
+				'email',
+				'senha',
+				'cep',
+				'rua',
+				'numero',
+				'bairro',
+				'cidade',
+				'estado',
+			],
+			base: 'user',
+			mutation: 'UPDATE_USUARIO',
+		}),
+		mostrarDadosLogin() {
+			return (
+				!this.$store.state.isLogged || this.$route.name === 'usuario-editar'
+			);
+		},
+	},
+	methods: {
+		preencherCEP() {
+			const cep = this.cep.replace(/\D/, '');
+
+			if (cep.length === 8)
+				getCEP(cep).then(({ data }) => {
+					this.rua = data.logradouro;
+					this.bairro = data.bairro;
+					this.cidade = data.localidade;
+					this.estado = data.uf;
+				});
+		},
+	},
 };
 </script>
 
 <style scoped>
-form {
+form,
+.usuario {
 	display: grid;
 	grid-template-columns: 80px 1fr;
 	align-items: center;
+}
+
+.usuario {
+	grid-column: 1 / 3;
 }
 
 .button {
